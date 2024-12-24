@@ -45,7 +45,7 @@ const Students: React.FC = () => {
 
   useEffect(() => {
     dispatch(getStudentsData({ cohort, batch }));
-  }, [cohort, batch]);
+  }, [cohort, batch, dispatch]);
 
   return (
     <section className="relative grow size-full flex flex-col justify-start items-start gap-10 bg-white rounded-xl p-4">

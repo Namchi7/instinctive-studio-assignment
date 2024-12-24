@@ -19,7 +19,7 @@ export const SelectScrollable: React.FC<{
 
   useEffect(() => {
     dispatchFn(value);
-  }, [value]);
+  }, [value, dispatchFn]);
 
   return (
     <Select value={value} onValueChange={setValue}>

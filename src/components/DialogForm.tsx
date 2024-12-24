@@ -7,8 +7,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CreateStudentForm } from "@/components/CreateStudentForm";
-import { EditStudentForm } from "@/components/EditStudentForm";
+// import { CreateStudentForm } from "@/components/CreateStudentForm";
+// import { EditStudentForm } from "@/components/EditStudentForm";
 
 const DialogForm: React.FC<{
   type: "add" | "edit";
