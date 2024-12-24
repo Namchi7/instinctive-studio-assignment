@@ -18,12 +18,25 @@ import {
 } from "@/constants/types";
 
 import { fetchStudentData, updateStudentRecord } from "@/lib/studentsAPI";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { getStudentsData } from "@/redux/reducers/GetStudentsSlice";
+import { RootState } from "@/redux/store";
 
 const EditStudentForm: React.FC<{
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   id: string;
 }> = ({ setOpen, id }) => {
+  const dispatch = useAppDispatch();
+
+  const fCohort: string = useAppSelector(
+    (state: RootState) => state.studentsPage.cohort
+  );
+  const fBatch: string = useAppSelector(
+    (state: RootState) => state.studentsPage.batch
+  );
+
   const [data, setData] = useState<StudentsDataType | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [name, setName] = useState<string>("");
   const [batch, setBatch] = useState<string>(classOptions[0].value);
@@ -63,9 +76,10 @@ const EditStudentForm: React.FC<{
 
     if (res.success) {
       setOpen(false);
-      toast("Record created successfully.");
+      toast("Record updates successfully.");
+      dispatch(getStudentsData({ cohort: fCohort, batch: fBatch }));
     } else {
-      toast(`Error while creating record.\nPlease try again.`);
+      toast(`Error while updating record.\nPlease try again.`);
     }
   };
 
@@ -80,9 +94,11 @@ const EditStudentForm: React.FC<{
 
   useEffect(() => {
     const getData = async () => {
+      setLoading(true);
       const res = await fetchStudentData(id);
 
       setData(res);
+      setLoading(false);
     };
 
     if (id) {
@@ -106,77 +122,83 @@ const EditStudentForm: React.FC<{
   return (
     <div className="fixed inset-0 size-full z-[20]">
       <div className="relative size-full flex justify-center items-center bg-black/80 p-4 z-[21]">
-        {data && (
-          <form className="absolute w-full max-w-[34rem] flex flex-col justify-start items-center gap-3 bg-white rounded-lg p-4 z-[23]">
-            <p className="w-full text-left text-2xl text-black font-bold">
-              Edit Student Record
-            </p>
+        <form className="absolute w-full max-w-[34rem] flex flex-col justify-start items-center gap-3 bg-white rounded-lg p-4 z-[23]">
+          <p className="w-full text-left text-2xl text-black font-bold">
+            Edit Student Record
+          </p>
 
-            <div className="w-full flex flex-col justify-start items-start gap-2">
-              <label htmlFor="name" className="">
-                Student Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                placeholder="Enter student name"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                }}
-                className="w-full text-[#3F526E] bg-[#E9EDF1] rounded-sm outline-none px-3 py-2"
-              />
+          {!loading ? (
+            <>
+              <div className="w-full flex flex-col justify-start items-start gap-2">
+                <label htmlFor="name" className="">
+                  Student Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Enter student name"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                  }}
+                  className="w-full text-[#3F526E] bg-[#E9EDF1] rounded-sm outline-none px-3 py-2"
+                />
+              </div>
+
+              <div className="w-full flex flex-col justify-start items-start gap-2">
+                <label htmlFor="batch" className="">
+                  Batch
+                </label>
+                <SelectScrollableInput
+                  options={classOptions}
+                  value={batch}
+                  setValue={setBatch}
+                  fieldName="Batch"
+                />
+              </div>
+
+              <div className="w-full flex flex-col justify-start items-start gap-2">
+                <label htmlFor="batch" className="">
+                  Cohort
+                </label>
+                <SelectScrollableInput
+                  options={cohortOptions}
+                  value={cohort}
+                  setValue={setCohort}
+                  fieldName="Cohort"
+                />
+              </div>
+
+              <div className="w-full flex flex-col justify-start items-start gap-2">
+                <label htmlFor="batch" className="">
+                  Courses
+                </label>
+
+                <CheckboxCourses value={courses} setValue={setCourses} />
+              </div>
+
+              <div className="w-full flex flex-col justify-start items-start gap-2">
+                <label htmlFor="batch" className="">
+                  Status
+                </label>
+                <SelectScrollableInput
+                  options={statusOptions}
+                  value={status}
+                  setValue={setStatus}
+                  fieldName="Status"
+                />
+              </div>
+
+              <Button onClick={submitForm} className="w-full">
+                Submit
+              </Button>
+            </>
+          ) : (
+            <div className="size-full flex justify-center items-center">
+              <p className="text-base text-black/80 font-medium">Loading...</p>
             </div>
-
-            <div className="w-full flex flex-col justify-start items-start gap-2">
-              <label htmlFor="batch" className="">
-                Batch
-              </label>
-              <SelectScrollableInput
-                options={classOptions}
-                value={batch}
-                setValue={setBatch}
-                fieldName="Batch"
-              />
-            </div>
-
-            <div className="w-full flex flex-col justify-start items-start gap-2">
-              <label htmlFor="batch" className="">
-                Cohort
-              </label>
-              <SelectScrollableInput
-                options={cohortOptions}
-                value={cohort}
-                setValue={setCohort}
-                fieldName="Cohort"
-              />
-            </div>
-
-            <div className="w-full flex flex-col justify-start items-start gap-2">
-              <label htmlFor="batch" className="">
-                Courses
-              </label>
-
-              <CheckboxCourses value={courses} setValue={setCourses} />
-            </div>
-
-            <div className="w-full flex flex-col justify-start items-start gap-2">
-              <label htmlFor="batch" className="">
-                Status
-              </label>
-              <SelectScrollableInput
-                options={statusOptions}
-                value={status}
-                setValue={setStatus}
-                fieldName="Status"
-              />
-            </div>
-
-            <Button onClick={submitForm} className="w-full">
-              Submit
-            </Button>
-          </form>
-        )}
+          )}
+        </form>
 
         <div
           onClick={() => setOpen(false)}

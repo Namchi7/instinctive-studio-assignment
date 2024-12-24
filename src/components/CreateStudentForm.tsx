@@ -17,10 +17,22 @@ import {
 } from "@/constants/types";
 
 import { createStudentRecord } from "@/lib/studentsAPI";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { getStudentsData } from "@/redux/reducers/GetStudentsSlice";
+import { RootState } from "@/redux/store";
 
 const CreateStudentForm: React.FC<{
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ setOpen }) => {
+  const dispatch = useAppDispatch();
+
+  const fCohort: string = useAppSelector(
+    (state: RootState) => state.studentsPage.cohort
+  );
+  const fBatch: string = useAppSelector(
+    (state: RootState) => state.studentsPage.batch
+  );
+
   const [name, setName] = useState<string>("");
   const [batch, setBatch] = useState<string>(classOptions[0].value);
   const [cohort, setCohort] = useState<string>(cohortOptions[0].value);
@@ -59,6 +71,7 @@ const CreateStudentForm: React.FC<{
     if (res.success) {
       setOpen(false);
       toast("Record created successfully.");
+      dispatch(getStudentsData({ cohort: fCohort, batch: fBatch }));
     } else {
       toast(`Error while creating record.\nPlease try again.`);
     }
@@ -117,7 +130,7 @@ const CreateStudentForm: React.FC<{
               Courses
             </label>
 
-            <CheckboxCourses setValue={setCourses} />
+            <CheckboxCourses value={courses} setValue={setCourses} />
           </div>
 
           <div className="w-full flex flex-col justify-start items-start gap-2">

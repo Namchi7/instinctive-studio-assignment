@@ -1,10 +1,8 @@
-"use client";
-
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 
 const CheckboxCourses: React.FC<{
-  value?: string[];
+  value: string[];
   setValue: React.Dispatch<React.SetStateAction<string[]>>;
 }> = ({ value, setValue }) => {
   const pushToValueArr = (checked: boolean, val: string) => {
@@ -17,12 +15,16 @@ const CheckboxCourses: React.FC<{
     });
   };
 
+  const setCheckedValues = (ele: HTMLInputElement, state: boolean) => {
+    ele.checked = state;
+  };
+
   return (
     <div className="items-top flex justify-start items-center gap-4">
       <div className="flex flex-row justify-start items-center gap-1">
         <Checkbox
           id="sci"
-          checked={value && value.includes("sci") ? true : false}
+          checked={value?.includes("sci")}
           onCheckedChange={(checked: boolean) => {
             pushToValueArr(checked, "sci");
           }}
@@ -33,7 +35,7 @@ const CheckboxCourses: React.FC<{
       <div className="flex flex-row justify-start items-center gap-1">
         <Checkbox
           id="math"
-          checked={value && value.includes("math") ? true : false}
+          checked={value?.includes("math")}
           onCheckedChange={(checked: boolean) => {
             pushToValueArr(checked, "math");
           }}
@@ -44,7 +46,7 @@ const CheckboxCourses: React.FC<{
       <div className="flex flex-row justify-start items-center gap-1">
         <Checkbox
           id="cs"
-          checked={value && value.includes("cs") ? true : false}
+          checked={value?.includes("cs")}
           onCheckedChange={(checked: boolean) => {
             pushToValueArr(checked, "cs");
           }}
@@ -55,7 +57,7 @@ const CheckboxCourses: React.FC<{
       <div className="flex flex-row justify-start items-center gap-1">
         <Checkbox
           id="eng"
-          checked={value && value.includes("eng") ? true : false}
+          checked={value?.includes("eng")}
           onCheckedChange={(checked: boolean) => {
             pushToValueArr(checked, "eng");
           }}
